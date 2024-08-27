@@ -1,0 +1,288 @@
+/******************************************************************************\
+FILE:           test_page.zm
+AUTHOR:         Theo Veenker <theo.veenker@beexy.nl>
+ADAPTED BY:     -
+
+DESCRIPTION:
+
+Provides a page object to show to the participant during test trials.
+It handles presenting the stimulus and recording the participant's response.
+
+
+HISTORY:
+2012-04-19 TV   Created.
+2017-01-09 TV   Adapted for Zep 2.0.
+
+\******************************************************************************/
+
+import std_sound_output_device;
+
+
+Page test_page
+{
+    TestItem    item;           // trial control parameters
+
+
+    init()
+    {
+        fill_pattern_color = TEST_PAGE_COLOR;
+    }
+
+
+    on_event:message()
+    {
+        // Process response box message. See setup() below.
+        response.process_hit(event_time);
+    }
+
+
+    VerticalLayout layout
+    {
+        init()
+        {
+            spacing = 50;
+            height = 0;     // 0 means as large as possible
+        }
+
+
+        CanvasGadget canvas
+        {
+            init()
+            {
+                fill_pattern_color = TEST_PAGE_STIMULUS_COLOR;
+                size = 450, 450;
+                offset_x = width / 2;
+                offset_y = height / 2;
+            }
+
+
+            CrossShape fixation
+            {
+                init()
+                {
+                    radius = 15;
+                    line_width = 5;
+                    line_pattern_color = color:crimson;
+                }
+            }
+
+
+            ImageShape stimulus
+            {
+                void load(string fn, int w=0)
+                {
+                    image = fn;
+                    if (w > 0) {
+                        width = w;
+                        height = -1;
+                    }
+                    else {
+                        width = 0;
+                        height = 0;
+                    }
+                    x = -actual_width / 2;
+                    y = -actual_height / 2;
+                }
+            }
+        }
+
+
+/*
+        ButtonGadget next
+        {
+            init()
+            {
+                text = NEXT_BUTTON_TEXT;
+                font_family = TEST_PAGE_BUTTON_FONT_FAMILY;
+                font_size = TEST_PAGE_BUTTON_FONT_SIZE;
+                fill_pattern_color = TEST_PAGE_BUTTON_COLOR;
+                text_color = TEST_PAGE_BUTTON_TEXT_COLOR;
+            }
+
+
+            on_event:activate()
+            {
+                response.process_hit(event_time);
+            }
+        }
+*/
+
+
+        time start_stimulus(time t)
+        {
+            // Prepare stimulus presentation object.
+            canvas.stimulus.load(stimuli_dir() + "images/" + item.imgfn);
+
+            // Start fixation cross.
+            canvas.fixation.start(t, FIXATION_DURATION);
+            time fixoffset = canvas.fixation.expected_finish_time;
+
+            // Start stimulus at fixation offset.
+            canvas.stimulus.start(fixoffset, STIMULUS_DURATION);
+
+            // Return stimulus onset time.
+            return canvas.stimulus.expected_start_time;
+        }
+
+
+        void reset()
+        {
+            full_abort();
+
+            canvas.stimulus.is_visible = false;
+        }
+    }
+
+
+    SoundPlayback beeper
+    {
+        // Sound source/producer object.
+        BeepGenerator beep {}
+
+
+        time play(time t)
+        {
+            abort();
+
+            device = sound_output_device;
+            beep.duration = 100ms;
+            beep.frequency[0] = 1000;
+            beep.scaling[0] = 0.5;
+            beep.fade_in_duration = 1ms;
+            beep.fade_out_duration = 1ms;
+
+            start(t);
+
+            return expected_finish_time;
+        }
+    }
+
+
+    Response response
+    {
+        void clear()
+        {
+        }
+
+
+        void process_hit(time t)
+        {
+            HitType validity = hit(t);
+
+            // Accept the first hit in the response interval and end the
+            // response interval.
+            if (validity == HIT_VALID)
+            {
+                ignore_remaining_hits();
+
+                stop();
+            }
+            else if (validity == HIT_TOO_EARLY || validity == HIT_TOO_LATE)
+            {
+                // False alarm. Deal with this if desired.
+            }
+        }
+
+
+        on_event:finish()
+        {
+            done(CONTINUE);
+        }
+    }
+
+
+    // Aborts any ongoing activity on this page and signals the initiator
+    // of the trial that we're done.
+    void done(int msgid)
+    {
+        // Just in case; abort presentation if still active.
+        layout.reset();
+
+        signal_target(msgid);   // tell caller we're done
+        target = null;
+
+        control.clear_status();
+    }
+
+
+    //==========================================================================
+
+
+    // Performs preparatory work required before using this page.
+    void setup(int ntrials=-1, bool pr=false)
+    {
+        test_page_overlay.setup(this);
+
+        // Show or hide prompt.
+        test_page_overlay.show_prompt(pr ?
+            "name each object" : "");
+
+        // Enable or disable the progress bar.
+        test_page_overlay.show_progress_bar(ntrials);   // disabled if < 0
+
+
+        // Enable response box buttons and fallback keyboard keys.
+        control.target = this;
+        control.disable_buttons();
+        control.disable_keys();
+        control.enable_all_buttons();
+//        control.enable_button(BUTTON_?);
+        control.enable_key(KEY_Return);
+        control.enable_key(' ');
+    }
+
+
+    // Performs cleaning up if necessary.
+    void cleanup()
+    {
+        test_page_overlay.cleanup();
+
+        control.disable_buttons();
+        control.disable_keys();
+        control.target = null;
+    }
+
+
+    // Starts a trial.
+    void action(Object caller, TestItem it, time tref, int count=-1)
+    {
+        // Save the passed trial control parameters.
+        item = it;
+
+
+        // Show this page (if not yet done) and make tref the trial start time.
+        tref = test_window1.show_test_page(this, tref + INTERTRIAL_INTERVAL);
+
+
+        // Reset response data.
+        response.clear();
+
+
+        // Start fixation symbol and stimulus.
+        time stimonset = layout.start_stimulus(tref);
+
+
+        // Start beep at stimulus onset.
+        beeper.play(stimonset);
+
+
+        // Response interval starts at stimulus onset. Timeout after
+        // RESPONSE_DURATION unless this duration is 0s or less.
+        response.start(stimonset, RESPONSE_DURATION);
+
+
+        // Update progress counter (if enabled).
+        test_page_overlay.update_progress_bar(count);
+
+
+        // Update status line on control window. Cleared in done() above.
+        control.set_status(
+            string(item.id) + "  " +
+            string(item.type) + "  " +
+            string(item.imgfn));
+
+
+        // Remember who to signal when the trial is over.
+        target = caller;
+    }
+}

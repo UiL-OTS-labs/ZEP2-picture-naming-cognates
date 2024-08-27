@@ -1,0 +1,65 @@
+/******************************************************************************\
+FILE:           stimuli.zm
+AUTHOR:         Theo Veenker <theo.veenker@beexy.nl>
+ADAPTED BY:     -
+
+DESCRIPTION:
+
+Defines the formats of item table(s) and provides the actual content of
+the item table(s) i.e. stimulus information.
+
+
+HISTORY:
+2012-04-19 TV   Created.
+2017-01-09 TV   Adapted for Zep 2.0.
+
+\******************************************************************************/
+
+
+// Symbolic definition of item type.
+enum ItemType
+{
+    FRUIT1,                     // image of a popular fruit
+    FRUIT2,                     // image of a less popular fruit
+    NON_FRUIT,                  // image of a non-fruit
+}
+
+
+// Item table record.
+record TestItem
+{
+    int         id;             // item id
+    ItemType    type;           // item type
+    string      imgfn;          // stimulus filename
+}
+
+
+// Practice item table.
+//   index: item number
+TestItem[] prac_items =
+{
+    {1,         FRUIT1,      "peach.png"},
+    {2,         NON_FRUIT,   "muffin.png"},
+    {3,         FRUIT2,      "avocado.png"},
+}
+
+
+// Test item table.
+//   index: item number
+TestItem[] test_items =
+{
+    {1,         FRUIT1,      "apple.png"},
+    {2,         FRUIT1,      "kiwi.png"},
+    {3,         FRUIT1,      "lemon.png"},
+    {4,         FRUIT1,      "pear.png"},
+
+    {5,         FRUIT2,      "fig.png"},
+    {6,         FRUIT2,      "guava.png"},
+    {7,         FRUIT2,      "papaya.png"},
+    {8,         FRUIT2,      "passionfruit.png"},
+
+    {9,         NON_FRUIT,   "cake.png"},
+    {10,        NON_FRUIT,   "pizza.png"},
+    {11,        NON_FRUIT,   "sandwich.png"},
+    {12,        NON_FRUIT,   "sausage.png"},
+}
