@@ -1,0 +1,22 @@
+
+const string PRAC_INSTRUCTION =
+   M"<b>Dear participant,</b>\n"
+    "\n"
+    "Thank you for participating in this experiment.\n"
+    "\n"
+    "You are now going to see pictures on the screen, one after "
+    "the other. Your task is to name each pictured object as "
+    "quickly as possible. Try to make no mistakes.\n"
+    "\n"
+    "First we will do a short practice.\n"
+    "\n"
+    "<i>Hit Enter when ready to start.</i>"
+
+const string TEST_INSTRUCTION =
+   M"End of the practice part.\n"
+    "\n"
+    "If you have any questions at this moment please ask the "
+    "experimenter now.\n"
+    "\n"
+    "<i>Hit Enter when ready to proceed.</i>";
+

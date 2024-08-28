@@ -38,6 +38,7 @@ import stimuli;
 import shuffle;
 import output;
 import test_page;
+import instructions;
 
 
 Block task
@@ -47,20 +48,7 @@ Block task
         on_event:entry()
         {
 //            pause_page.set_text_size(1000, 600);
-            pause_page.set_text(
-                "<b>Dear participant,</b>\n"
-                "\n"
-                "Thank you for participating in this experiment.\n"
-                "\n"
-                "You are now going to see pictures on the screen, one after "
-                "the other. Your task is to name each pictured object as "
-                "quickly as possible. Try to make no mistakes.\n"
-                "\n"
-                "First we will do a short practice.\n"
-                "\n"
-                "<i>Hit Enter when ready to start.</i>",
-                true);
-
+            pause_page.set_text(PRAC_INSTRUCTION, true);
             pause_page.action(this);
         }
     }
@@ -121,15 +109,7 @@ Block task
     {
         on_event:entry()
         {
-            pause_page.set_text(
-                "End of the practice part.\n"
-                "\n"
-                "If you have any questions at this moment please ask the "
-                "experimenter now.\n"
-                "\n"
-                "<i>Hit Enter when ready to proceed.</i>",
-                true);
-
+            pause_page.set_text(TEST_INSTRUCTIONS, true);
             pause_page.action(this);
         }
     }
