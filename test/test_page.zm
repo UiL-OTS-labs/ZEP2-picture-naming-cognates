@@ -111,7 +111,8 @@ Page test_page
         time start_stimulus(time t)
         {
             // Prepare stimulus presentation object.
-            canvas.stimulus.load(stimuli_dir() + "images/" + item.imgfn);
+            string stimfn = stimuli_dir() + "images/PICTURE_" + item.pic_num + ".png";
+            canvas.stimulus.load(stimfn);
 
             // Start fixation cross.
             canvas.fixation.start(t, FIXATION_DURATION);
@@ -279,7 +280,7 @@ Page test_page
         control.set_status(
             string(item.id) + "  " +
             string(item.type) + "  " +
-            string(item.imgfn));
+            string("PICTURE_" + item.pic_num));
 
 
         // Remember who to signal when the trial is over.
