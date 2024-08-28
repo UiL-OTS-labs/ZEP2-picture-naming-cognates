@@ -17,7 +17,14 @@ HISTORY:
 // Shuffles test_items table (no restrictions on item order).
 int shuffle_test_items()
 {
-    test_items.shuffle(0, -1);
+    // For the first and third block, the first and second half of the items should be
+    // shuffled separately.
+    // The second block is handled differently.
+    test_items1.shuffle(0, test_items1.size/2);
+    test_items1.shuffle(test_items1.size/2, test_items1.size);
+    
+    test_items3.shuffle(0, test_items3.size/2);
+    test_items3.shuffle(test_items3.size/2, test_items3.size);
 
     return OK;
 }
