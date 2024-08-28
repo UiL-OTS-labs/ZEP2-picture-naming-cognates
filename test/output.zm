@@ -24,7 +24,7 @@ record TestOutput
     int         trialnum;       // trial number
 
     int         id;             // item id
-    ItemType    type;           // item type
+    TrialType   trialtype;      // trial type
     string      imgfn;          // stimulus filename
 }
 
@@ -49,7 +49,7 @@ void test_output_append(TestOutput data)
     expdb.set_trial_data_int_field("id", data.id,
         "item id");
 
-    expdb.set_trial_data_enum_field("type", string(data.type),
+    expdb.set_trial_data_enum_field("trialtype", string(data.trialtype),
         "item type");
 
     expdb.set_trial_data_string_field("imgfn", data.imgfn,
