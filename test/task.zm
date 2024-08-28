@@ -104,20 +104,7 @@ Block task
         }
     }
 
-
-    Part pause
-    {
-        on_event:entry()
-        {
-            pause_page.set_text(TEST_INSTRUCTIONS, true);
-            pause_page.action(this);
-        }
-    }
-
-
-    Block test
-    {
-        TestItem        item;   // current item
+    Block test_block {
 
 
         on_event:entry()
@@ -125,8 +112,7 @@ Block task
             // Randomize test item table.
             if (shuffle_test_items() != OK) terminate;
 
-            num_cycles = test_items.size;
-//            num_cycles = 3;
+            num_cycles = 3; // There are three test blocks
 
             // Prepare test page: progress bar enabled, prompt disabled.
             test_page.setup(num_cycles, false);
@@ -139,37 +125,81 @@ Block task
             sound_capture.rec(fn, reference_time + 100ms, 0s);
         }
 
-
-        on_event:exit()
-        {
-            // Stop audio recording.
-            sound_capture.abort();
-
-            test_page.cleanup();
-
-            save_trial_data();
-        }
-
-
-        Trial trial
+        Part pause
         {
             on_event:entry()
             {
-                item = test_items[test.cycle];
+                pause_page.set_text(TEST_INSTRUCTION, true);
+                pause_page.action(this);
+            }
+        }
 
-                test_page.action(this, item, reference_time, test.cycle);
+
+        Block test
+        {
+            TestItem[] items; // current block of items
+            TestItem   item;  // current item
+
+            on_event:entry()
+            {
+                if (test_block.cycle == 0) {
+                    items = test_items1;
+                }
+                else if (test_block.cycle == 1) {
+                    items = test_items2;
+                }
+                else if (test_block.cycle == 2) {
+                    items = test_items3;
+                }
+                else {
+                    terminate "Initiating unanticipated block";
+                }
+
+                num_cycles = items.size;
+
+                // Prepare test page: progress bar enabled, prompt disabled.
+                test_page.setup(num_cycles, false);
+
+                // Create folder for audio recordings and start recording in 100ms.
+                string dir = data_dir() + script_name() + "/";
+                if (!file_exists(dir)) create_dir_tree(dir);
+                string fn = dir + "ses-" +
+                    format(expdb.session.id, 4) + "-test.wav";
+                sound_capture.rec(fn, reference_time + 100ms, 0s);
             }
 
 
             on_event:exit()
             {
-                // Add new row to test output table.
-                TestOutput output;
-                output.trialnum = test.cycle + 1;
-                output.id = item.id;
-                output.type = item.type;
-                output.imgfn = item.imgfn;
-                test_output_append(output);
+                // Stop audio recording.
+                sound_capture.abort();
+
+                test_page.cleanup();
+
+                save_trial_data();
+            }
+
+
+            Trial trial
+            {
+                on_event:entry()
+                {
+                    item = items[test.cycle];
+
+                    test_page.action(this, item, reference_time, test.cycle);
+                }
+
+
+                on_event:exit()
+                {
+                    // Add new row to test output table.
+                    TestOutput output;
+                    output.trialnum = test.cycle + 1;
+                    output.id = item.id;
+                    output.trialtype = item.type;
+                    output.imgfn = "PICTURE_" + item.pic_num;
+                    test_output_append(output);
+                }
             }
         }
     }
