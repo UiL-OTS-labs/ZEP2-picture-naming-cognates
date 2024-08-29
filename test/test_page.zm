@@ -50,7 +50,7 @@ Page test_page
             init()
             {
                 fill_pattern_color = TEST_PAGE_STIMULUS_COLOR;
-                size = 450, 450;
+                size = 700, 700;
                 offset_x = width / 2;
                 offset_y = height / 2;
             }
@@ -66,60 +66,78 @@ Page test_page
                 }
             }
 
+            ImageShape cue
+            {
+                init()
+                {
+                    width = 200;
+                    height = 100;
+                    offset_x = -width/2;
+                    offset_y = -height/2;
+                }
+
+                void load(string cue_fn)
+                {
+                    image = cue_fn;
+                }
+            }
+
+            ImageShape stim_cue
+            {
+                init()
+                {
+                    width = 200;
+                    height = 100;
+                    offset_x = -width / 2;
+                    offset_y = -200 - height/2;
+                }
+
+                void load(string stim_cue_fn)
+                {
+                    image = stim_cue_fn;
+                }
+            }
+
 
             ImageShape stimulus
             {
-                void load(string fn, int w=0)
+                init ()
+                {
+                    width = 200;
+                    height = 200;
+                    offset_x = -width/2;
+                    offset_y = -height/2;
+                }
+
+                void load(string fn)
                 {
                     image = fn;
-                    if (w > 0) {
-                        width = w;
-                        height = -1;
-                    }
-                    else {
-                        width = 0;
-                        height = 0;
-                    }
-                    x = -actual_width / 2;
-                    y = -actual_height / 2;
                 }
             }
         }
 
-
-/*
-        ButtonGadget next
-        {
-            init()
-            {
-                text = NEXT_BUTTON_TEXT;
-                font_family = TEST_PAGE_BUTTON_FONT_FAMILY;
-                font_size = TEST_PAGE_BUTTON_FONT_SIZE;
-                fill_pattern_color = TEST_PAGE_BUTTON_COLOR;
-                text_color = TEST_PAGE_BUTTON_TEXT_COLOR;
-            }
-
-
-            on_event:activate()
-            {
-                response.process_hit(event_time);
-            }
-        }
-*/
-
-
         time start_stimulus(time t)
         {
             // Prepare stimulus presentation object.
-            string stimfn = stimuli_dir() + "images/PICTURE_" + item.pic_num + ".png";
+            string imgdir = stimuli_dir() + "images/";
+            string stimfn = imgdir + "PICTURE_" + item.pic_num + ".png";
+            string cue_fn = imgdir + item.cue + 2 + ".png";
+            string stim_cue_fn = imgdir + item.cue + 1 + ".png";
+
+            canvas.cue.load(cue_fn);
+            canvas.stim_cue.load(stim_cue_fn);
             canvas.stimulus.load(stimfn);
 
             // Start fixation cross.
             canvas.fixation.start(t, FIXATION_DURATION);
             time fixoffset = canvas.fixation.expected_finish_time;
 
-            // Start stimulus at fixation offset.
-            canvas.stimulus.start(fixoffset, STIMULUS_DURATION);
+            canvas.cue.start(fixoffset, CUE_DURATION);
+            time cueoffset = canvas.cue.expected_finish_time;
+
+            // Start stimulus and stim_cue at fixation offset.
+            canvas.stim_cue.start(cueoffset, STIMULUS_DURATION);
+            canvas.stimulus.start(cueoffset, STIMULUS_DURATION);
 
             // Return stimulus onset time.
             return canvas.stimulus.expected_start_time;

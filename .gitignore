@@ -1,2 +1,8 @@
 # vim temporary files
 **.sw[op]
+
+# db folder from zep
+db
+
+# my own documentation
+documentation
