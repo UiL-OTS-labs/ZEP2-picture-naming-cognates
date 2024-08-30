@@ -71,7 +71,7 @@ Page test_page
                 init()
                 {
                     width = 200;
-                    height = 100;
+                    height = 133;
                     offset_x = -width/2;
                     offset_y = -height/2;
                 }
@@ -86,7 +86,7 @@ Page test_page
             {
                 init()
                 {
-                    width = 200;
+                    width = 100;
                     height = 100;
                     offset_x = -width / 2;
                     offset_y = -200 - height/2;
@@ -121,8 +121,8 @@ Page test_page
             // Prepare stimulus presentation object.
             string imgdir = stimuli_dir() + "images/";
             string stimfn = imgdir + "PICTURE_" + item.pic_num + ".png";
-            string cue_fn = imgdir + item.cue + 2 + ".png";
-            string stim_cue_fn = imgdir + item.cue + 1 + ".png";
+            string cue_fn = imgdir + item.cue + 1 + ".png";
+            string stim_cue_fn = imgdir + item.cue + 2 + ".png";
 
             canvas.cue.load(cue_fn);
             canvas.stim_cue.load(stim_cue_fn);
