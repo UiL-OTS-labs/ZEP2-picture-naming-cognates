@@ -21,7 +21,8 @@ enum TrialType
 {
     PRACTICE,
     SAME,
-    SWITCH
+    SWITCH,
+    FIRST
 }
 
 enum ConditionType {

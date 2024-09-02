@@ -13,15 +13,82 @@ HISTORY:
 
 \******************************************************************************/
 
+const int NUM_TRIES = 1000;
+
+int count_items(TestItem[] items, TrialType type) {
+    int i = 0;
+    int count;
+    while(i < items.size) {
+        if (items[i].type == type) {
+            count++;
+        }
+        i++;
+    }
+    return count;
+}
+
+bool
+stimuli_meet_mixed_constraints(TestItem[] items) {
+    
+    int i = 1;
+    
+    int count_first = count_items(items, FIRST);
+    int count_switch = count_items(items, SWITCH);
+    int count_same = count_items(items, SAME);
+
+    if (items[0].type != FIRST) {
+        print_error("Oops first items isn't FIRST.\n");
+        return false;
+    }
+
+    if (count_first != 1) {
+        print_error("Oops, expected to have exactly one FIRST items\n");
+    }
+
+    return (count_first == 1 && abs(count_switch - count_same) < 1) ? true : false;
+}
+
+void apply_item_types(TestItem[] items) {
+    
+    int i = 1;
+    items[0].type = FIRST;
+
+    while (i < items.size) {
+        items[i].type = (items[i].cue == items[i-1].cue) ? SAME : SWITCH;
+        i++;
+    }
+}
+
+int
+shuffle_block2() {
+    int i = 0;
+    bool meet_constraints = false;
+
+    while (!meet_constraints) {
+        test_items2.shuffle(0, -1);
+        apply_item_types(test_items2);
+        meet_constraints = stimuli_meet_mixed_constraints(test_items2);
+        i++;
+    }
+
+    if (!meet_constraints) {
+        print_error("After " + NUM_TRIES + "tries, still not valid sequence found.\n");
+    }
+
+    return meet_constraints ?  OK : ERROR;
+
+}
 
 // Shuffles test_items table (no restrictions on item order).
 int shuffle_test_items()
 {
     // For the first and third block, the first and second half of the items should be
     // shuffled separately.
-    // The second block is handled differently.
     test_items1.shuffle(0, test_items1.size/2);
     test_items1.shuffle(test_items1.size/2, test_items1.size);
+
+    // The second block is handled differently.
+    shuffle_block2();
     
     test_items3.shuffle(0, test_items3.size/2);
     test_items3.shuffle(test_items3.size/2, test_items3.size);
