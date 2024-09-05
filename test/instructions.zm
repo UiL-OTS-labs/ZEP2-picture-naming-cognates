@@ -12,7 +12,7 @@ const string PRAC_INSTRUCTION =
     "\n"
     "<i>Hit Enter when ready to start.</i>";
 
-const string TEST_INSTRUCTION =
+const string TEST_INSTRUCTION_BLOCK1 =
    M"End of the practice part.\n"
     "\n"
     "If you have any questions at this moment please ask the "
@@ -20,3 +20,26 @@ const string TEST_INSTRUCTION =
     "\n"
     "<i>Hit Enter when ready to proceed.</i>";
 
+const string TEST_INSTRUCTION_BLOCK2 =
+   M"End of the first block.\n"
+    "\n"
+    "If you have any questions at this moment please ask the "
+    "experimenter now.\n"
+    "\n"
+    "<i>Hit Enter when ready to proceed.</i>";
+
+const string TEST_INSTRUCTION_BLOCK3 =
+   M"End of the second block.\n"
+    "\n"
+    "If you have any questions at this moment please ask the "
+    "experimenter now.\n"
+    "\n"
+    "<i>Hit Enter when ready to proceed.</i>";
+
+
+
+const string INSTRUCTION_HALF1=
+   M"Instruction half way one";
+
+const string INSTRUCTION_HALF3= 
+   M"Instruction half way three";

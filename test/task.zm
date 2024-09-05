@@ -106,11 +106,16 @@ Block task
 
     Block test_block {
 
-
         on_event:entry()
         {
             // Randomize test item table.
             if (shuffle_test_items() != OK) terminate;
+
+            if (have_flag("short")) {
+                test_items1.size = 4;
+                test_items2.size = 4;
+                test_items3.size = 4;
+            }
 
             num_cycles = 3; // There are three test blocks
 
@@ -129,7 +134,18 @@ Block task
         {
             on_event:entry()
             {
-                pause_page.set_text(TEST_INSTRUCTION, true);
+                if (test_block.cycle == 0) {
+                    pause_page.set_text(TEST_INSTRUCTION_BLOCK1, true);
+                }
+                else if (test_block.cycle == 1) {
+                    pause_page.set_text(TEST_INSTRUCTION_BLOCK2, true);
+                }
+                else if (test_block.cycle == 2) {
+                    pause_page.set_text(TEST_INSTRUCTION_BLOCK3, true);
+                }
+                else {
+                    print_error("Oops unexpected block\n");
+                }
                 pause_page.action(this);
             }
         }
@@ -178,7 +194,56 @@ Block task
 
                 save_trial_data();
             }
+        
+            TransientPart test_instruction
+            {
+                on_event:entry()
+                {
+                    if ((test_block.cycle == 0 || test_block.cycle == 2)
+                         && test.cycle == items.size / 2) {
+                        pre_instruction_pause.enter();
+                    }
+                    else {
+                        trial.enter();
+                    }
+                }
+            }
+            
+            Part pre_instruction_pause
+            {
+                on_event:entry()
+                {
+                    blank_page.action_auto(this, 500ms);
+                }
+            }
 
+            Part halfway_instruction
+            {
+                on_event:entry()
+                {
+                    if (test_block.cycle == 0) {
+                        pause_page.set_text(INSTRUCTION_HALF1);
+                        pause_page.action(this);
+                    }
+                    else if (test_block.cycle == 2) {
+                        pause_page.set_text(INSTRUCTION_HALF3);
+                        pause_page.action(this);
+                    }
+                    else {
+                        print_error(
+                            "Oops unexpected pause: test.cyle = " + test_block.cycle + "\n"
+                        );
+                    }
+                }
+            }
+            
+            Part post_instruction_pause
+            {
+                on_event:entry()
+                {
+                    blank_page.action_auto(this, 500ms);
+                }
+            }
 
             Trial trial
             {
