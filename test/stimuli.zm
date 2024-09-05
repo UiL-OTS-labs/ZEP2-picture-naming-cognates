@@ -73,3 +73,33 @@ load_stimuli() {
     }
     return OK;
 }
+
+void print_item(TestItem item) {
+    println(
+            format(item.id, 3) + " " +
+            item.cond + " " +
+            item.type + " " +
+            format(item.cue) + " " +
+            format(item.pic_num, 3) + " " +
+            format(item.nl_name) + " " +
+            format(item.en_name)
+           );
+}
+
+void print_items(TestItem[] items) {
+    int i = 0;
+    while (i < items.size) {
+        print_item(items[i]);
+        i++;
+    }
+}
+
+void print_stimuli() {
+    println("stimuli block 1:");
+    print_items(test_items1);
+    println("\nstimuli block 2:");
+    print_items(test_items2);
+    println("\nstimuli block 3:");
+    print_items(test_items3);
+}
+
