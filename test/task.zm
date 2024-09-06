@@ -121,13 +121,6 @@ Block task
 
             // Prepare test page: progress bar enabled, prompt disabled.
             test_page.setup(num_cycles, false);
-
-            // Create folder for audio recordings and start recording in 100ms.
-            string dir = data_dir() + script_name() + "/";
-            if (!file_exists(dir)) create_dir_tree(dir);
-            string fn = dir + "ses-" +
-                format(expdb.session.id, 4) + "-test.wav";
-            sound_capture.rec(fn, reference_time + 100ms, 0s);
         }
 
         Part pause
@@ -176,12 +169,19 @@ Block task
                 // Prepare test page: progress bar enabled, prompt disabled.
                 test_page.setup(num_cycles, false);
 
+                string pp_id = expdb.participant.id;
+                string ses_id = format(expdb.session.id, 4);
+                string block_num = "" + (test_block.cycle + 1);
+
                 // Create folder for audio recordings and start recording in 100ms.
-                string dir = data_dir() + script_name() + "/";
-                if (!file_exists(dir)) create_dir_tree(dir);
+                string dir = data_dir() + script_name() + "/" + pp_id + "/" + ses_id + "/";
+                if (!file_exists(dir)) {
+                    create_dir_tree(dir);
+                }
                 string fn = dir + "ses-" +
-                    format(expdb.session.id, 4) + "-test.wav";
-                sound_capture.rec(fn, reference_time + 100ms, 0s);
+                    ses_id + "-" +
+                    "block-" + block_num + "-test.wav";
+                sound_capture.rec(fn, reference_time + 100ms, 3600s);
             }
 
 
