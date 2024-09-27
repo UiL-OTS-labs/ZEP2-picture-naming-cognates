@@ -4,9 +4,16 @@ const string PRAC_INSTRUCTION =
     "\n"
     "Thank you for participating in this experiment.\n"
     "\n"
-    "You are now going to see pictures on the screen, one after "
-    "the other. Your task is to name each pictured object as "
-    "quickly as possible. Try to make no mistakes.\n"
+    "You are now going to see pictures of concrete objects "
+    "on the screen, one after the other. Before each object "
+    "is presented, you will see either a Dutch or English flag.\n "
+    "\n"
+    "Your task is to name each object aloud as quickly as "
+    "possible <i>in the language indicated by the flag<i>, "
+    "that is, Dutch or English. Try to make no mistakes.\n"
+    "\n"
+    "The experiment consists of three blocks, with breaks in "
+    "between each block.\n "
     "\n"
     "First we will do a short practice.\n"
     "\n"
@@ -14,6 +21,10 @@ const string PRAC_INSTRUCTION =
 
 const string TEST_INSTRUCTION_BLOCK1 =
    M"End of the practice part.\n"
+    "\n"
+    "Block 1 will start next. First you will have to name each "
+    "object in one language and then in the other language. "
+    "There is a pause in between languages.\n "
     "\n"
     "If you have any questions at this moment please ask the "
     "experimenter now.\n"
@@ -23,6 +34,10 @@ const string TEST_INSTRUCTION_BLOCK1 =
 const string TEST_INSTRUCTION_BLOCK2 =
    M"End of the first block.\n"
     "\n"
+    "Block 2 will start next. In this block you will again "
+    "have to name each object in Dutch or English, but there "
+    "is any particular order.\n "
+    "\n"
     "If you have any questions at this moment please ask the "
     "experimenter now.\n"
     "\n"
@@ -30,6 +45,10 @@ const string TEST_INSTRUCTION_BLOCK2 =
 
 const string TEST_INSTRUCTION_BLOCK3 =
    M"End of the second block.\n"
+    "\n"
+    "Block 3 will start next. First you will have to name each "
+    "object in one language and then in the other language. "
+    "There is a pause in between languages.\n "
     "\n"
     "If you have any questions at this moment please ask the "
     "experimenter now.\n"
@@ -39,7 +58,7 @@ const string TEST_INSTRUCTION_BLOCK3 =
 
 
 const string INSTRUCTION_HALF1=
-   M"Instruction half way one";
+   M"Now switch to the other language as indicated by the flag";
 
 const string INSTRUCTION_HALF3= 
-   M"Instruction half way three";
+   M"Now switch to the other language as indicated by the flag";
